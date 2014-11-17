@@ -1,43 +1,46 @@
-Jake & Sana - BTP 500 A3
-	Planning
+// CSV Classes
 
-	
-// Node class (ONLY NEEDED FOR GRAPH CLASS!)
-class Node {
-	// Each Node will represent a single String from a certain CSV
-	String data;							// a single entry from a CSV table
-	// and all related data (require/provide/create) in an ArrayList.
-	ArrayList<Node> related;				// all related items 
-	
-	// constructors
-	Node();									// default Constructor
-	Node(String data);						// Loaded Constructor (called with each new csv entry)
-};
+class Requires {
+	Source src;
+	Capability cap;
+}
 
+class Provided {
+	Capability cap;
+	Binary bin;
+}
+
+class Creates {
+	Binary bin;
+	Source src;
+}
+
+// Main data classes
+
+class Source {
+	string data;
+}
+
+class Capability {
+	string data;
+}
+
+class Binary {
+	string data;
+}
+
+
+
+
+// Leaf class
+class Leaf {
+	string data;
+	list<leaf> object;	
+}
 
 // Graph Class
 class Graph {
-	// Data
-	Tree <node> src;				// tree of sources and related capabilities (from Goal.csv and Requires.csv)
-	Tree <node> cap;				// tree of Capabilities and related Binaries (from Requires.csv and Provided.csv)
-	Tree <node>	bin;				// tree of Binaries and related Goal Sources(from Provided.csv and Created.csv)
-	// Counters
-	private int nodeCount;			// counter of every node that's been created
-	private int linkCount;			// count of all connections (links) between nodes
-	
-	// main 'get' methods:
-	public int getEdges(); 							// counts all connections between nodes and returns the total	/** LINKCOUNT*/
-	public int getNodes();							// counts all nodes in all trees and returns total 				/** NODECOUNT!*/
-	
-	// main 'print' methods
-	public void printRequirements(String src);		// prints all required capabilities from a source	
-	public void printProvides(String cap);			// prints all binaries provided by capabilities	
-	public void printCreates(String bin);			// prints all sources generated from binaries
-		
-	// main 'CSV adding' Methods
-	public void makeSources(String src);				// called from main when adding CSV from Goals table		/**UPDATE NODECOUNT*/
-	public void nakeRequire(String src, String dep);	// called from main when adding CSV from Requires table		/**UPDATE NODECOUNT, LINKCOUNT */
-	public void makeProvide(String dep, String bin);	// called from main when adding CSV from Provides table		/**UPDATE NODECOUNT, LINKCOUNT */
-	public void makeCreate(String bin, String src);		// called from main when adding CSV from Creates table		/**UPDATE NODECOUNT, LINKCOUNT */
-	
-};
+	Tree <leaf> src;
+	Tree <leaf> cap;
+	Tree <leaf>	bin;
+}
