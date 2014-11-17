@@ -1,5 +1,5 @@
-Jake & Sana - BTP 500 A3
-	Planning
+//Jake & Sana - BTP 500 A3
+//	Planning
 	
 // Node class (ONLY NEEDED FOR GRAPH CLASS!)
 class Node {
@@ -17,9 +17,9 @@ class Node {
 // Graph Class
 class Graph {
 	// Data
-	public Tree <node> src;				// tree of sources and related capabilities (from Goal.csv and Requires.csv)
-	public Tree <node> cap;				// tree of Capabilities and related Binaries (from Requires.csv and Provided.csv)
-	public Tree <node>	bin;			// tree of Binaries and related Goal Sources(from Provided.csv and Created.csv)
+	public Tree <Node> src;				// tree of sources and related capabilities (from Goal.csv and Requires.csv)
+	public Tree <Node> cap;				// tree of Capabilities and related Binaries (from Requires.csv and Provided.csv)
+	public Tree <Node>	bin;			// tree of Binaries and related Goal Sources(from Provided.csv and Created.csv)
 	
 	// Counters
 	private int nodeCount;				// counter of every node that's been created
