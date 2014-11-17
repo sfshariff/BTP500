@@ -1,0 +1,46 @@
+// CSV Classes
+
+class Requires {
+	Source src;
+	Capability cap;
+}
+
+class Provided {
+	Capability cap;
+	Binary bin;
+}
+
+class Creates {
+	Binary bin;
+	Source src;
+}
+
+// Main data classes
+
+class Source {
+	string data;
+}
+
+class Capability {
+	string data;
+}
+
+class Binary {
+	string data;
+}
+
+
+
+
+// Leaf class
+class Leaf {
+	string data;
+	list<leaf> object;	
+}
+
+// Graph Class
+class Graph {
+	Tree <leaf> src;
+	Tree <leaf> cap;
+	Tree <leaf>	bin;
+}
