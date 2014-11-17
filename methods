@@ -1,0 +1,15 @@
+###Main
+  load data from csv
+  determine dependencies, use addEdge()
+  query
+    use getSize()
+    use printEdges()
+    use findPath()
+  PrintGoals()
+###Graph
+boolean AddEdge( String data );
+int getSize();
+void printEdges(string data);
+boolean findPath(String src1, String src2, int n);
+
+
