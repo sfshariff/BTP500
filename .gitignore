@@ -14,6 +14,7 @@ hs_err_pid*
 # csv
 *.csv
 
+#eclipse crap
 *.xml
 *.index
 *.png
