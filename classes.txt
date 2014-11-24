@@ -1,46 +1,106 @@
 //Jake & Sana - BTP 500 A3
 //	Planning
 	
-// Node class (ONLY NEEDED FOR GRAPH CLASS!)
-class Node {
-	// Each Node will represent a single String from a certain CSV
-	String data;							// a single entry from a CSV table
-	// and all related data (require/provide/create) in an ArrayList.
-	ArrayList<Node> related;				// all related items 
-	
-	// constructors
-	Node();									// default Constructor
-	Node(String data);						// Loaded Constructor (called with each new csv entry)
-};
+
+/* GOALS */
+while(csv.getNext() != null){
+
+	g.addVert( csv.getNext().data );
 
 
-// Graph Class
-class Graph {
-	// Data
-	public Tree <Node> src;				// tree of sources and related capabilities (from Goal.csv and Requires.csv)
-	public Tree <Node> cap;				// tree of Capabilities and related Binaries (from Requires.csv and Provided.csv)
-	public Tree <Node>	bin;			// tree of Binaries and related Goal Sources(from Provided.csv and Created.csv)
+} // end while for Goals table
+
+
+
+
+// set up src - cap
+
+while ( csv2.getNext() != null ){
 	
-	// Counters
-	private int nodeCount;				// counter of every node that's been created
-	private int linkCount;				// count of all connections (links) between nodes
-	
-	// main 'get' methods:
-	public int getEdges(); 							// counts all connections between nodes and returns the total	/** LINKCOUNT*/
-	public int getNodes();							// counts all nodes in all trees and returns total 				/** NODECOUNT*/
-	
-	// main 'print' methods
-	public void printRequirements(String src);		// prints all required capabilities from a source			
-	public void printProvides(String cap);			// prints all binaries provided by capabilities	
-	public void printCreates(String bin);			// prints all sources generated from binaries
-		
-	// main 'CSV adding' Methods
-	public void makeSource(String src);					// called from main when adding CSV from Goals table		/**UPDATE NODECOUNT*/
-	public void nakeRequire(String src, String dep);	// called from main when adding CSV from Requires table		/**UPDATE NODECOUNT, LINKCOUNT */
-	public void makeProvide(String dep, String bin);	// called from main when adding CSV from Provides table		/**UPDATE NODECOUNT, LINKCOUNT */
-	public void makeCreate(String bin, String src);		// called from main when adding CSV from Creates table		/**UPDATE NODECOUNT, LINKCOUNT */
-	
-	// constructors
-	public Graph();										// Default constructor
-	
-};
+	if ( g.contains(csv2.getNext().source) 	// if the source is found in the graph
+	{		// add that entry to the graph member's list
+		g.related.add(csv2.getNext.cap);
+	}
+
+}// end while for src-cap
+
+
+
+// When we add that to the list, we then have a new data member and list to add to for cap
+
+
+
+// set up cap - bin
+
+while ( csv3.getNext() != null ){
+
+	// *** not sure about this, may need an iterator to go from source to source!
+
+	if ( g.related.contains(csv3.getNext().cap) 	// if the capability is in the Source's list 
+	{		//add that entry to the graph member's list member's list :S
+		g.related..add(csv2.getNext.cap);
+	}
+
+}// end while for src-cap
+
+
+// set up the final cap - bin relation, (connect the original data members to the list of each binary)
+
+while ( csv3.getNext() != null ){
+
+	// *** not sure about this, may need an iterator to go from source to source!
+
+	if ( g.related.contains(csv3.getNext().cap) 	// if the capability is in the Source's list 
+	{		//add that entry to the graph member's list member's list :S
+		g.related..add(csv2.getNext.cap);
+	}
+
+}// end while for src-cap
+
+
+// once your relations are st up, you just need to figure out how to query the lists to find relations between two different sources
+
+
+
+
+
+
+
+					Source ------------------------------------------------------------|
+					|					O--------------------------|
+					|	CSV 1				O--------------------------|
+					|	makes many sources		O--------------------------| Many Sources
+					|					O--------------------------|
+			________________V________________________                               
+			|	|	|	|	|	|	Sources have many capabilities	   |
+			|	|	|	|	|	|					   |
+			|	|	|	|	|	|					   |
+			|	|	|	|	|	|					   |
+			O	O	O	O	O	O	CAPABILITIES			   |
+								|	require many...			   |
+								|					   |
+								|	   				   |
+								|					   |
+								|					   |	To Produce
+								|					   |
+						________________V________________________		   |
+						|	|	|	|	|	|		   |
+						|	|	|	|	|	|		   |
+						|	|	|	|	|	|		   |
+						|	|	|	|	|	|		   |
+						|	|	|	|	|	|		   |
+						O	O	O	O	O	O	BINARIES   |
+										|			   |
+										|__________________________+
+
+
+
+
+
+
+
+
+
+
+
+
