@@ -82,8 +82,6 @@ public class Graph {
 	 * @param target: Target vertex.
 	 * @param dep: Used in Depth-first Searching through Graph.
 	 * @param pat: Empty Array List used to store the path found.
-	 * @return: ArrayList<String> with the path between the origin and target vertices 
-	 * 			stored at progressively increasing indices.
 	 */
 	
 	
@@ -103,20 +101,18 @@ public class Graph {
 		// we add the origin to the path until we know it is wrong.
 		pathList.add(origin);
 				
-		if (origin.equals(target)) {
-			for ( Iterator<String>i = pathList.iterator(); i.hasNext(); ){
-				String path = i.next();
-				System.out.print(path);
-				if (i.hasNext())
-					System.out.print("==>");
-				else
-					System.out.print("\n");				
-			}
-		}
-
 		// haven't found the target within the provided depth, exit after removing prev. added
 		if (dep == 0){
-			pathList.remove(origin);
+			if (origin.equals(target)) {
+				for ( Iterator<String>i = pathList.iterator(); i.hasNext(); ){
+					String path = i.next();
+					System.out.print(path);
+					if (i.hasNext())
+						System.out.print("==>");
+					else
+						System.out.print("\n");				
+				}
+			}
 			return;
 		}
 		
@@ -130,33 +126,39 @@ public class Graph {
 	}	// end method
 	
 	/**
-	 * Checks the Graph for a provided matching string pattern. 
-	 * @param pat: The pattern being matched against a string value
-	 * @return: an ArrayList of Strings which match the provided pattern 
+	 * Checks the Graph for a provided matching string pattern, 
+	 * starting at the shortest possible path and working down through the graph. 
+	 * @param pat1: The pattern being matched against pat2 value.
+	 * @param pat2: The pattern being tested against pat1 value .
 	 */
 	public void printMatchingEdges(String pat1, String pat2 ){
 		ArrayList<String> pathList = new ArrayList<String>();
 		String v1 = "";
 		String v2 = "";
-		// find all patterns in connections that match pat1
-		for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
-			if (e.getKey().contains(pat1)){
-				// if connections contains pat1, 
-				 v1 = e.getKey();
-				 break;
-			}
-		}
 		
-		for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
-			if (e.getKey().contains(pat2)){
-				// if connections contains pat2, add to match array to be returned 
-				 v2 = e.getKey();
-				 break;
+		
+			// find all patterns in connections that match pat1
+			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
+				if (e.getKey().contains(pat1)){
+					// if connections contains pat1, 
+					 v1 = e.getKey();
+					 break;
+				}
 			}
-		}		
+			
+			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
+				if (e.getKey().contains(pat2)){
+					// if connections contains pat2, add to match array to be returned 
+					 v2 = e.getKey();
+					 break;
+				}
+			}		
+		
 		
 		if (!v1.isEmpty()  && !v2.isEmpty())
-			findPattern(v1,v2, vertCount, pathList);
+			// iterates from smallest to largest path
+			for (int ii=0; ii<vertCount; ii++)	
+			findPattern(v1,v2, ii, pathList);
 	}
 	
 	/**
