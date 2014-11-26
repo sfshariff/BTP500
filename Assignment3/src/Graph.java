@@ -1,6 +1,7 @@
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -77,11 +78,9 @@ public class Graph {
 	 * @param pat1: The pattern being matched against pat2 value.
 	 * @param pat2: The pattern being tested against pat1 value .
 	 */
-	public void printMatchingEdges(String pat1, String pat2 ){
-		ArrayList<String> pathList = new ArrayList<String>();
+	public boolean printMatchingEdges(String pat1, String pat2 ){
 		String v1 = "";
 		String v2 = "";
-		
 		
 			// find all patterns in connections that match pat1
 			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
@@ -103,8 +102,23 @@ public class Graph {
 		
 		if (!v1.isEmpty()  && !v2.isEmpty())
 			// iterates from smallest to largest path
-			for (int ii=0; ii<vertCount; ii++)	
-			findPattern(v1,v2, ii, pathList);
+			for (int ii=0; ii<vertCount; ii++){	
+				if (depthFirst(v1,v2, ii))
+					return true;	
+			}
+		return false;
+	}
+	/**
+	 * Calls FindPattern to create a more user-friendly method when calling. 
+	 * 
+	 * @param origin - vertex 1 to test for relation
+	 * @param target - vertex 1 to test for relation
+	 * @param dep - depth to search into the tree
+	 * @return
+	 */
+	public boolean depthFirst(String origin, String target, int dep ){
+		Stack<String> pathList = new Stack<String>();
+		return findPattern(origin, target, dep, pathList);
 	}
 	
 	/**
@@ -114,13 +128,7 @@ public class Graph {
 	 * @param dep: Used in Depth-first Searching through Graph.
 	 * @param pat: Empty Array List used to store the path found.
 	 */
-	public void findPattern(String origin, String target, int dep, ArrayList<String> pathList){
-		/*
-		 * find a path of specified length dep between 2 goal sources that are specified by two patterns 
-		 * 	– find the first goal source, S1, that matches, and then only for S1, 
-		 * 		find all sources S2 connected to S1 by a path of length dep.
-		 */
-		
+	public boolean findPattern(String origin, String target, int dep , Stack<String> pathList){
 		// iterator needed to go through the TreeSets of each node 
 		Iterator<String> iter;
 		// get iterator
@@ -128,7 +136,7 @@ public class Graph {
 		
 		// when trying to see if the current node is a valid path node, 
 		// we add the origin to the path until we know it is wrong.
-		pathList.add(origin);
+		pathList.push(origin);
 				
 		// haven't found the target within the provided depth, exit after removing prev. added
 		if (dep == 0){
@@ -138,11 +146,14 @@ public class Graph {
 					System.out.print(path);
 					if (i.hasNext())
 						System.out.print("==>");
-					else
-						System.out.print("\n");				
+					else{
+						System.out.print("\n");
+						return true;
+					}
 				}
 			}
-			return;
+			pathList.pop();
+			return false;
 		}
 		
 		// for each value in the TreeSet of the current node
@@ -150,8 +161,11 @@ public class Graph {
 			// if value of origin is found, add to pat
 			String dummy = iter.next();
 			if (!pathList.contains(dummy))
-				findPattern(dummy, target, dep-1, pathList);
-		}
+				// recursive call
+				 if (findPattern(dummy, target, dep-1, pathList))
+					 return true;
+		}// end while
+		return false;
 	}	// end method
 	
 	
