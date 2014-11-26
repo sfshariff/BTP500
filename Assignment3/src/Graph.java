@@ -32,19 +32,14 @@ public class Graph {
 	 * @param v2: Vertex to connect to v1.
 	 * @return: boolean indicating status of add. False for failure.
 	 */
-	public boolean addEdge(String v1, String v2){
-		if (this.connections.containsKey(v1) && this.connections.containsKey(v2)){
+	public void addEdge(String v1, String v2){
+		if (this.connections.containsKey(v1) && this.connections.containsKey(v2))
 			// both vertices found in Graph, add target to Source treeSet
 			// make sure it's not already stored
 			if (!this.connections.get(v1).contains(v2)){
 				this.connections.get(v1).add(v2);
 				this.edgeCount++;
-			}
-			return true;
-			
-		}else
-			return false;
-		
+			}			
 	}
 	
 	/**
@@ -75,7 +70,43 @@ public class Graph {
 	public int getVerts(){
 		return vertCount;
 	}
-
+	
+	/**
+	 * Checks the Graph for a provided matching string pattern, starting at the shortest possible path and working down through the graph. 
+	 * Calls FindPattern for search logic.
+	 * @param pat1: The pattern being matched against pat2 value.
+	 * @param pat2: The pattern being tested against pat1 value .
+	 */
+	public void printMatchingEdges(String pat1, String pat2 ){
+		ArrayList<String> pathList = new ArrayList<String>();
+		String v1 = "";
+		String v2 = "";
+		
+		
+			// find all patterns in connections that match pat1
+			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
+				if (e.getKey().contains(pat1)){
+					// if connections contains pat1, 
+					 v1 = e.getKey();
+					 break;
+				}
+			}
+			
+			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
+				if (e.getKey().contains(pat2)){
+					// if connections contains pat2, add to match array to be returned 
+					 v2 = e.getKey();
+					 break;
+				}
+			}		
+		
+		
+		if (!v1.isEmpty()  && !v2.isEmpty())
+			// iterates from smallest to largest path
+			for (int ii=0; ii<vertCount; ii++)	
+			findPattern(v1,v2, ii, pathList);
+	}
+	
 	/**
 	 * Depth-First Search for relation between vertex v1 and v2 found within depth 'dep' of the Graph.  
 	 * @param origin: Origin vertex.
@@ -83,8 +114,6 @@ public class Graph {
 	 * @param dep: Used in Depth-first Searching through Graph.
 	 * @param pat: Empty Array List used to store the path found.
 	 */
-	
-	
 	public void findPattern(String origin, String target, int dep, ArrayList<String> pathList){
 		/*
 		 * find a path of specified length dep between 2 goal sources that are specified by two patterns 
@@ -125,41 +154,7 @@ public class Graph {
 		}
 	}	// end method
 	
-	/**
-	 * Checks the Graph for a provided matching string pattern, 
-	 * starting at the shortest possible path and working down through the graph. 
-	 * @param pat1: The pattern being matched against pat2 value.
-	 * @param pat2: The pattern being tested against pat1 value .
-	 */
-	public void printMatchingEdges(String pat1, String pat2 ){
-		ArrayList<String> pathList = new ArrayList<String>();
-		String v1 = "";
-		String v2 = "";
-		
-		
-			// find all patterns in connections that match pat1
-			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
-				if (e.getKey().contains(pat1)){
-					// if connections contains pat1, 
-					 v1 = e.getKey();
-					 break;
-				}
-			}
-			
-			for(Entry<String, TreeSet<String>> e : this.connections.entrySet()){
-				if (e.getKey().contains(pat2)){
-					// if connections contains pat2, add to match array to be returned 
-					 v2 = e.getKey();
-					 break;
-				}
-			}		
-		
-		
-		if (!v1.isEmpty()  && !v2.isEmpty())
-			// iterates from smallest to largest path
-			for (int ii=0; ii<vertCount; ii++)	
-			findPattern(v1,v2, ii, pathList);
-	}
+	
 	
 	/**
 	 * Constructor
