@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
   /** USE THIS TO TEST IF NEEDED! */
 /** 
  * Make a new Graph object
@@ -64,7 +62,6 @@ public class Main {
 
 	public static void main(String[] args) {
 	Graph test = new Graph();
-	ArrayList<String>pathList = new ArrayList();
 	
 	test.addVert("OhMy!");
 	test.addVert("OhNo!");
@@ -81,8 +78,10 @@ public class Main {
 	test.addEdge("OhMy!","SoSorry!");
 
 	System.out.println("Vertices: "+test.getVerts()+" Edges: "+test.getEdges());
-
-	test.findPattern("OhMy!", "SoSorry!", 1, pathList);
+	
+	System.out.println("Depth First");
+	test.depthFirst("OhMy!", "SoSorry!", 2);
+	System.out.println("Print Matching Edges");
 	test.printMatchingEdges("Oh" , "So");
 
 	}// end main
