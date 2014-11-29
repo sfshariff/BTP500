@@ -9,14 +9,14 @@ import java.util.TreeSet;
 
 
 public class Main {
-	public TreeSet<String> goal;
+	public Goal goal;
 	public Requires requires;
 	public Provided provided;
 	public Created created;
 	
 	public Main() 
 	{
-		goal = new TreeSet<String>();
+		goal = new Goal();
 		requires = new Requires();
 		provided = new Provided();
 		created = new Created();
@@ -39,7 +39,7 @@ public class Main {
 			        // use comma as separator
 				String[] source = line.split(cvsSplitBy);
 	 
-				goal.add(source[0]);
+				goal.sources.add(source[0]);
 				graph.addVert(source[0]);
 	 
 			}
@@ -120,7 +120,8 @@ public class Main {
 		
 		//System.out.println(object.goal);
 		
-		Iterator iterator = object.goal.iterator();
+		Iterator iterator = object.goal.sources.iterator();
+		
 		
 		while (iterator.hasNext())
 		{
@@ -159,7 +160,7 @@ public class Main {
 									source = object.created.source.get(j).toString();
 									found = true;
 									
-									if(object.goal.contains(source)) {
+									if(object.goal.sources.contains(source)) {
 										graph.addEdge(string, source);
 																		
 										
