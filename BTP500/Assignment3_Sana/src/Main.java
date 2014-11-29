@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.TreeSet;
 
 
@@ -23,7 +24,7 @@ public class Main {
 	}
 	
 	
-	public void readCSVGoals() {
+	public void readCSVGoals(Graph graph) {
 		 
 		String csvFile = "CSVFiles/lb_goal.csv";
 		BufferedReader br = null;
@@ -39,6 +40,7 @@ public class Main {
 				String[] source = line.split(cvsSplitBy);
 	 
 				goal.add(source[0]);
+				graph.addVert(source[0]);
 	 
 			}
 	 
@@ -57,12 +59,12 @@ public class Main {
 		}
 		//testing
 		System.out.println("Done");
-		this.readCSVRequires();
 	  }
 	
-	public void readCSVRequires() {
+	
+	public void loadCSVFiles(ArrayList<String> list1, ArrayList<String> list2, String path) {
 		 
-		String csvFile = "CSVFiles/secondToCheck.csv";
+		String csvFile = "CSVFiles/"+path;
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
@@ -75,8 +77,8 @@ public class Main {
 			        // use comma as separator
 				String[] source = line.split(cvsSplitBy);
 	 
-				this.requires.source.add(source[0]);
-				this.requires.capability.add(source[1]);
+				list1.add(source[0]);
+				list2.add(source[1]);
 	 
 			}
 	 
@@ -95,83 +97,15 @@ public class Main {
 		}
 		//testing
 		System.out.println("Done");
-		this.readCSVProvided();
 	  }
 	
-	public void readCSVProvided() {
-		 
-		String csvFile = "CSVFiles/thirdToCheck.csv";
-		BufferedReader br = null;
-		String line = "";
-		String cvsSplitBy = ",";
-	 
-		try {
-	 
-			br = new BufferedReader(new FileReader(csvFile));
-			while ((line = br.readLine()) != null) {
-	 
-			        // use comma as separator
-				String[] source = line.split(cvsSplitBy);
-	 
-				this.provided.capability.add(source[0]);
-				this.provided.binary.add(source[1]);
-	 
-			}
-	 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		//testing
-		System.out.println("Done");
-		this.readCSVCreated();
-	  }
-	
-	public void readCSVCreated() {
-		 
-		String csvFile = "CSVFiles/fourth_getSource.csv";
-		BufferedReader br = null;
-		String line = "";
-		String cvsSplitBy = ",";
-	 
-		try {
-	 
-			br = new BufferedReader(new FileReader(csvFile));
-			while ((line = br.readLine()) != null) {
-	 
-			        // use comma as separator
-				String[] source = line.split(cvsSplitBy);
-	 
-				this.created.binary.add(source[0]);
-				this.created.source.add(source[1]);
-	 
-			}
-	 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		//testing
-		System.out.println("Done");
-	  }
+	public void loadFiles(Graph graph)
+	{
+		readCSVGoals(graph);
+		loadCSVFiles(this.requires.source, this.requires.capability, "secondToCheck.csv");
+		loadCSVFiles(this.provided.capability, this.provided.binary, "thirdToCheck.csv");
+		loadCSVFiles(this.created.binary, this.created.source, "fourth_getSource.csv");
+	}
 	
 	public static void main(String[] args) {
 		Main object = new Main();
@@ -182,18 +116,22 @@ public class Main {
 		boolean found = false;
 		int count =0;
 		
-		object.readCSVGoals();
+		object.loadFiles(graph);
 		
 		//System.out.println(object.goal);
 		
 		Iterator iterator = object.goal.iterator();
 		
+		while(iterator.hasNext()) {
+			graph.addVert(iterator.next().toString());
+		}
+		
+		iterator = object.goal.iterator();
 		while (iterator.hasNext())
 		{
 			count++;
 			String string = iterator.next().toString();
 			//System.out.println("count: "+count);
-			graph.addVert(string);
 
 			
 			for (int i = 0; i < object.requires.source.size(); i++)
@@ -207,6 +145,7 @@ public class Main {
 				
 				if (object.requires.source.get(i).toString().equals(string))
 				{
+					
 					capabilities = object.requires.capability.get(i).toString();
 					//System.out.println("Capabilities: "+capabilities );
 					
@@ -215,6 +154,7 @@ public class Main {
 						//System.out.println("inside capability");
 						if (object.provided.capability.get(k).toString().equals(capabilities)==true)
 						{
+							
 							binaries = object.provided.binary.get(k).toString();
 							
 							for (int j = 0; j < object.created.binary.size() && found == false; j++)
@@ -224,8 +164,11 @@ public class Main {
 									source = object.created.source.get(j).toString();
 									found = true;
 									
-									if(object.goal.contains(source))
+									if(object.goal.contains(source)) {
 										graph.addEdge(string, source);
+																		
+										
+									}
 									//System.out.println("done!!!!");
 								}
 							}
@@ -236,10 +179,10 @@ public class Main {
 					
 			}
 		}
-        //testing
 		System.out.println("DONE!!!");
 		//graph.printTree();
-		
+		boolean result = graph.depthFirst("kernel-3.17.0-301.fc21.src.rpm", "glibc-2.20-5.fc21.src.rpm", 2);
+		System.out.println(result);
 		
 	}
 
