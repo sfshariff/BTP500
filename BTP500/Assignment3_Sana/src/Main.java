@@ -122,11 +122,6 @@ public class Main {
 		
 		Iterator iterator = object.goal.iterator();
 		
-		while(iterator.hasNext()) {
-			graph.addVert(iterator.next().toString());
-		}
-		
-		iterator = object.goal.iterator();
 		while (iterator.hasNext())
 		{
 			count++;
