@@ -2,24 +2,26 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Stack;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 
 public class Main {
-	public Goal goal;
-	public Requires requires;
-	public Provided provided;
-	public Created created;
+	public TreeSet<String> sources;
+	public TreeMap<String, TreeSet<String>> goal;
+	public TreeMap<String, TreeSet<String>> requires;
+	public TreeMap<String, TreeSet<String>> provided;
+	public TreeMap<String, TreeSet<String>> created;
 	
 	public Main() 
 	{
-		goal = new Goal();
-		requires = new Requires();
-		provided = new Provided();
-		created = new Created();
+		sources = new TreeSet<String>();
+		goal = new TreeMap<String, TreeSet<String>>();		
+		requires = new TreeMap<String, TreeSet<String>>();	
+		provided = new TreeMap<String, TreeSet<String>>();	
+		created = new TreeMap<String, TreeSet<String>>();	
 		
 	}
 	
@@ -39,7 +41,7 @@ public class Main {
 			        // use comma as separator
 				String[] source = line.split(cvsSplitBy);
 	 
-				goal.sources.add(source[0]);
+				sources.add(source[0]);
 				graph.addVert(source[0]);
 	 
 			}
@@ -62,7 +64,7 @@ public class Main {
 	  }
 	
 	
-	public void loadCSVFiles(ArrayList<String> list1, ArrayList<String> list2, String path) {
+	public void loadCSVFiles(TreeMap<String, TreeSet<String>> list, String path) {
 		 
 		String csvFile = "CSVFiles/"+path;
 		BufferedReader br = null;
@@ -76,9 +78,16 @@ public class Main {
 	 
 			        // use comma as separator
 				String[] source = line.split(cvsSplitBy);
-	 
-				list1.add(source[0]);
-				list2.add(source[1]);
+				
+				if(!list.containsKey(source[0])) 
+				{
+					list.put(source[0], new TreeSet<String>());
+					list.get(source[0]).add(source[1]);
+				}
+				
+				else
+					list.get(source[0]).add(source[1]);
+				
 	 
 			}
 	 
@@ -102,9 +111,9 @@ public class Main {
 	public void loadFiles(Graph graph)
 	{
 		readCSVGoals(graph);
-		loadCSVFiles(this.requires.source, this.requires.capability, "secondToCheck.csv");
-		loadCSVFiles(this.provided.capability, this.provided.binary, "thirdToCheck.csv");
-		loadCSVFiles(this.created.binary, this.created.source, "fourth_getSource.csv");
+		loadCSVFiles(this.requires,"secondToCheck.csv");
+		loadCSVFiles(this.provided, "thirdToCheck.csv");
+		loadCSVFiles(this.created, "fourth_getSource.csv");
 	}
 	
 	public static void main(String[] args) {
@@ -112,68 +121,56 @@ public class Main {
 		Graph graph = new Graph();	//creating a graph object to add vertices and edges
 		String capabilities = null;
 		String binaries = null;
-		String source = null;
-		boolean found = false;
+		String source2 = null;
 		
 		//loading csv files into the data structures
 		object.loadFiles(graph);
 		
-		//iterator to iterate through the goal sources line by line
-		Iterator iterator = object.goal.sources.iterator();
+		Iterator iterator = object.sources.iterator();
 		
 		//while the iterator has a next object
 		while (iterator.hasNext())
 		{
 			//getting goal source line by line
 			String source1 = iterator.next().toString();
-
-			//checking the requires table for the source1
-			for (int i = 0; i < object.requires.source.size(); i++)
-			{	
-				found = false;
-				
+			
+			//checking requires table for the goal source
+			if(object.requires.containsKey(source1))
+			{
 				//if the source1 is found in requires table, fetching the required capability
-				if (object.requires.source.get(i).toString().equals(source1))
+				for(Iterator it_req = object.requires.get(source1).iterator(); it_req.hasNext();)
 				{
-					
-					capabilities = object.requires.capability.get(i).toString();
+					capabilities = it_req.next().toString();
 					
 					//checking the provided table for the fetched capability
-					for (int k = 0; k < object.provided.capability.size() && found == false; k++)
+					//if the capability found in the requires table, fetching the binary provided for the capability
+					for(Iterator it_prov = object.provided.get(capabilities).iterator(); it_prov.hasNext();)
 					{
-						//if the capability found in the requires table, fetching the binary provided for the capability
-						if (object.provided.capability.get(k).toString().equals(capabilities)==true)
+						binaries = it_prov.next().toString();
+						
+						//checking the created table for the fetched binary to get the source2
+						for(Iterator it = object.created.get(binaries).iterator(); it.hasNext();)
 						{
+							source2 = it.next().toString();
 							
-							binaries = object.provided.binary.get(k).toString();
-							
-							//checking the created table for the fetched binary to get the source2
-							for (int j = 0; j < object.created.binary.size() && found == false; j++)
-							{
-								if (object.created.binary.get(j).toString().equals(binaries)==true)
-								{
-									source = object.created.source.get(j).toString();
-									found = true;	//flag to true to exit the for loop
-									
-									//check if the source2 found is a goal source, and add an edge
-									if(object.goal.sources.contains(source)) {
-										graph.addEdge(source1, source);
-																		
-										
-									}
-								}
-							}
+							//check if the source2 found is a goal source, and add an edge
+							if(object.sources.contains(source2))
+								graph.addEdge(source1, source2);
 						}
 					}
-				}
-											
 					
+				}
 			}
+			
 		}
+		
+		
+		//while the iterator has a next object
+		
 		System.out.println("DONE!!!");
-		graph.printTree();
-		boolean result = graph.depthFirst("kernel-3.17.0-301.fc21.src.rpm", "glibc-2.20-5.fc21.src.rpm", 2);
-		System.out.println(result);
+		//graph.printTree();
+		//boolean result = graph.depthFirst("kernel-3.17.0-301.fc21.src.rpm", "glibc-2.20-5.fc21.src.rpm", 2);
+		//System.out.println(result);
 		
 	}
 
