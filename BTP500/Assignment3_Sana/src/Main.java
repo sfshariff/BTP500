@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -59,8 +60,7 @@ public class Main {
 				}
 			}
 		}
-		//testing
-		System.out.println("Done");
+		
 	  }
 	
 	
@@ -104,8 +104,7 @@ public class Main {
 				}
 			}
 		}
-		//testing
-		System.out.println("Done");
+		
 	  }
 	
 	public void loadFiles(Graph graph)
@@ -116,15 +115,11 @@ public class Main {
 		loadCSVFiles(this.created, "fourth_getSource.csv");
 	}
 	
-	public static void main(String[] args) {
-		Main object = new Main();	//creating a main object to load files and determine dependencies
-		Graph graph = new Graph();	//creating a graph object to add vertices and edges
+	public void findDependencies(Main object, Graph graph)
+	{
 		String capabilities = null;
 		String binaries = null;
 		String source2 = null;
-		
-		//loading csv files into the data structures
-		object.loadFiles(graph);
 		
 		Iterator iterator = object.sources.iterator();
 		
@@ -163,11 +158,80 @@ public class Main {
 			}
 			
 		}
+	}
+	
+	public void findMatchingGoals(String pattern)
+	{
+		TreeSet<String> match = new TreeSet<String>();
 		
+		for(Iterator it = this.sources.iterator(); it.hasNext();)
+		{
+			String source = it.next().toString();
+			if(source.toLowerCase().contains(pattern.toLowerCase()))
+				match.add(source);
+		}
 		
-		//while the iterator has a next object
+		Iterator iter = match.iterator();
+		System.out.println("\nGoals that match pattern '"+pattern+"': \n");
+		while(iter.hasNext())
+			System.out.println("-> "+iter.next()+"\n");
+	}
+	
+	public static void main(String[] args) {
+		Main object = new Main();	//creating a main object to load files and determine dependencies
+		Graph graph = new Graph();	//creating a graph object to add vertices and edges
+		Scanner in = new Scanner(System.in);
+		String pattern1, pattern2;
 		
-		System.out.println("DONE!!!");
+		//loading csv files into the data structures
+		object.loadFiles(graph);
+		
+		//find dependencies
+		object.findDependencies(object, graph);
+		
+		System.out.println("Select one of the following options: \n");
+		System.out.println("1- Find size of the graph \n"
+				+ "2- Print matching goals\n"
+				+ "3- Print matching dependencies\n"
+				+ "4- Find paths");
+		int option = in.nextInt();
+		
+		switch(option)
+		{
+		case 1: System.out.println("\nSize of the graph\n"
+				+  "*********************"
+				+ "\nNumber of Vertices: "+ graph.getVerts()
+				+"\nNumber of Edges: "+graph.getEdges());
+				break;
+		
+		case 2: System.out.println("\nFind matching goals\n"
+				+  "**********************");
+				System.out.println("\nPlease enter a pattern of string to find matching goals: ");
+				String pattern = in.next();
+				object.findMatchingGoals(pattern);
+				break;
+				
+		case 3: System.out.println("\nFinding matching dependencies \n"
+				+ "******************************"
+				+ "\nPlease enter the first goal source (or a pattern of string): ");
+				pattern1 = in.next();
+				System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
+				pattern2 = in.next();
+				graph.printMatchingEdges(pattern1, pattern2);
+				break;
+				
+		case 4: System.out.println("\nFind a path between two goal sources of a specified length \n"
+				+ "***********************************************************"
+				+ "\nPlease enter the first goal source (or a pattern of string): ");
+				pattern1 = in.next();
+				System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
+				pattern2 = in.next();
+				System.out.println("\nPlease enter the length: ");
+				int length = in.nextInt();
+				graph.depthFirst(pattern1, pattern2, length);
+				break;
+		}
+				
 		//graph.printTree();
 		//boolean result = graph.depthFirst("kernel-3.17.0-301.fc21.src.rpm", "glibc-2.20-5.fc21.src.rpm", 2);
 		//System.out.println(result);
