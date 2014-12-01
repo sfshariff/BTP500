@@ -177,11 +177,25 @@ public class Main {
 			System.out.println("-> "+iter.next()+"\n");
 	}
 	
+	public int userOptions(Scanner in)
+	{
+		System.out.println("Select one of the following options: \n");
+		System.out.println("1- Find size of the graph \n"
+				+ "2- Print matching goals\n"
+				+ "3- Print matching dependencies\n"
+				+ "4- Find paths\n"
+				+ "5- Exit");
+		int option = in.nextInt();
+		return option;
+	}
+	
 	public static void main(String[] args) {
 		Main object = new Main();	//creating a main object to load files and determine dependencies
 		Graph graph = new Graph();	//creating a graph object to add vertices and edges
 		Scanner in = new Scanner(System.in);
 		String pattern1, pattern2;
+		int option = 0;
+		boolean exit = false;
 		
 		//loading csv files into the data structures
 		object.loadFiles(graph);
@@ -189,47 +203,50 @@ public class Main {
 		//find dependencies
 		object.findDependencies(object, graph);
 		
-		System.out.println("Select one of the following options: \n");
-		System.out.println("1- Find size of the graph \n"
-				+ "2- Print matching goals\n"
-				+ "3- Print matching dependencies\n"
-				+ "4- Find paths");
-		int option = in.nextInt();
 		
-		switch(option)
-		{
-		case 1: System.out.println("\nSize of the graph\n"
-				+  "*********************"
-				+ "\nNumber of Vertices: "+ graph.getVerts()
-				+"\nNumber of Edges: "+graph.getEdges());
-				break;
+		while (option != 5 && !exit) {
+			option = object.userOptions(in);
+			
+			switch(option)
+			{
+			case 1: System.out.println("\nSize of the graph\n"
+					+  "*********************"
+					+ "\nNumber of Vertices: "+ graph.getVerts()
+					+"\nNumber of Edges: "+graph.getEdges());
+					break;
 		
-		case 2: System.out.println("\nFind matching goals\n"
-				+  "**********************");
-				System.out.println("\nPlease enter a pattern of string to find matching goals: ");
-				String pattern = in.next();
-				object.findMatchingGoals(pattern);
-				break;
+			case 2: System.out.println("\nFind matching goals\n"
+					+  "**********************");
+					System.out.println("\nPlease enter a pattern of string to find matching goals: ");
+					String pattern = in.next();
+					object.findMatchingGoals(pattern);
+					break;
 				
-		case 3: System.out.println("\nFinding matching dependencies \n"
-				+ "******************************"
-				+ "\nPlease enter the first goal source (or a pattern of string): ");
-				pattern1 = in.next();
-				System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
-				pattern2 = in.next();
-				graph.printMatchingEdges(pattern1, pattern2);
-				break;
+			case 3: System.out.println("\nFinding matching dependencies \n"
+					+ "******************************"
+					+ "\nPlease enter the first goal source (or a pattern of string): ");
+					pattern1 = in.next();
+					System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
+					pattern2 = in.next();
+					boolean found = graph.printMatchingEdges(pattern1, pattern2);
+					if(!found)
+						System.out.println("\nNo Matches Found!");
+					break;
 				
-		case 4: System.out.println("\nFind a path between two goal sources of a specified length \n"
-				+ "***********************************************************"
-				+ "\nPlease enter the first goal source (or a pattern of string): ");
-				pattern1 = in.next();
-				System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
-				pattern2 = in.next();
-				System.out.println("\nPlease enter the length: ");
-				int length = in.nextInt();
-				graph.depthFirst(pattern1, pattern2, length);
-				break;
+			case 4: System.out.println("\nFind a path between two goal sources of a specified length \n"
+					+ "***********************************************************"
+					+ "\nPlease enter the first goal source (or a pattern of string): ");
+					pattern1 = in.next();
+					System.out.println("\nPlease enter the second goal source (or a pattern of string): ");
+					pattern2 = in.next();
+					System.out.println("\nPlease enter the length: ");
+					int length = in.nextInt();
+					graph.depthFirst(pattern1, pattern2, length);
+					break;
+				
+			case 5: exit = true;
+					break;
+			}
 		}
 				
 		//graph.printTree();
